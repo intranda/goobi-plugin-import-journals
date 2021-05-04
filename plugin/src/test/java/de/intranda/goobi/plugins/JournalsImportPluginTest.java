@@ -2,6 +2,7 @@ package de.intranda.goobi.plugins;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -53,16 +54,24 @@ public class JournalsImportPluginTest {
     public void testConstructor() {
         JournalsImportPlugin plugin = new JournalsImportPlugin();
         assertNotNull(plugin);
-        assertEquals(ImportType.FILE, plugin.getImportTypes().get(0));
+        assertEquals(ImportType.FOLDER, plugin.getImportTypes().get(0));
         plugin.setImportFolder(tempFolder.getAbsolutePath());
     }
 
+    @Test
+    public void testConfigurationFile() {
+        JournalsImportPlugin plugin = new JournalsImportPlugin();
+        assertTrue(plugin.isRunnableAsGoobiScript());
+        assertEquals("K10+", plugin.getCatalogueName());
+        assertEquals("src/test/resources", plugin.getImportFolder());
+    }
+
     private XMLConfiguration getConfig() {
-        String file = "plugin_intranda_import_sample.xml";
+        String file = "plugin_intranda_import_journals.xml";
         XMLConfiguration config = new XMLConfiguration();
         config.setDelimiterParsingDisabled(true);
         try {
-            config.load(resourcesFolder + file);
+            config.load(file);
         } catch (ConfigurationException e) {
         }
         config.setReloadingStrategy(new FileChangedReloadingStrategy());

@@ -73,6 +73,9 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
     @Setter
     private String importFolder;
 
+    @Getter
+    private String catalogueName;
+
     @Setter
     private MassImportForm form;
 
@@ -115,12 +118,13 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
         if (myconfig != null) {
             runAsGoobiScript = myconfig.getBoolean("/runAsGoobiScript", false);
             collection = myconfig.getString("/collection", "");
+            importFolder = myconfig.getString("/importFolder", "");
+            catalogueName = myconfig.getString("/catalogueName", "");
         }
     }
 
     /**
-     * This method is used to generate records based on the imported data
-     * these records will then be used later to generate the Goobi processes
+     * This method is used to generate records based on the imported data these records will then be used later to generate the Goobi processes
      */
     @Override
     public List<Record> generateRecordsFromFile() {
@@ -170,8 +174,7 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
     }
 
     /**
-     * This method is used to actually create the Goobi processes
-     * this is done based on previously created records
+     * This method is used to actually create the Goobi processes this is done based on previously created records
      */
     @Override
     @SuppressWarnings("unchecked")

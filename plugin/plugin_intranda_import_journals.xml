@@ -1,15 +1,14 @@
 <config_plugin>
-	<config>
-
-		<!-- which workflow template shall be used -->
-		<template>*</template>
-
-		<!-- which digital collection to use 
-		<collection>General</collection> 
-		-->
-
-		<!-- define if import shall use GoobiScript to run in the background -->
-		<runAsGoobiScript>true</runAsGoobiScript>
-
-	</config>
+    <config>
+        <!-- which workflow template shall be used -->
+        <template>*</template>
+        <!-- define if import shall use GoobiScript to run in the background -->
+        <runAsGoobiScript>true</runAsGoobiScript>
+        
+        <!-- import root folder -->
+        <importFolder>src/test/resources</importFolder>
+        
+        <!-- opac name, must match a name in goobi_opac.xml -->
+        <catalogueName>K10+</catalogueName>
+    </config>
 </config_plugin>
