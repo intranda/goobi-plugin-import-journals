@@ -44,6 +44,20 @@ import ugh.fileformats.mets.MetsMods;
 @Log4j2
 public class JournalsImportPlugin implements IImportPluginVersion2 {
 
+    /*
+    - get root folder from configuration file
+    - get all journals/newspaper folder within root folder
+
+    - get ppn from selected folders
+    - opac call - kxp or zdb? get catalogue name from config
+    - get volume folder within newspaper folder
+    - create process for each volume - year/volume number/volume id is taken from folder name
+    - check if the volume contains images or sub folder
+        - images -> import images to volume
+        - sub folder -> create issues for each folder
+    - delete imported files
+     */
+
     @Getter
     private String title = "intranda_import_journals";
     @Getter
@@ -80,7 +94,7 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
      */
     public JournalsImportPlugin() {
         importTypes = new ArrayList<>();
-        importTypes.add(ImportType.FILE);
+        importTypes.add(ImportType.FOLDER);
     }
 
     /**
@@ -121,32 +135,32 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
         try {
             // read the file in to generate the records
             String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        
+
             // run through the content line by line
             String lines[] = content.split("\\r?\\n");
 
             // generate a record for each process to be created
             for (String line : lines) {
-                
+
                 // Split the string and generate a hashmap for all needed metadata
                 String fields[] = line.split(";");
-                HashMap<String, String> map = new HashMap<String, String>();
+                HashMap<String, String> map = new HashMap<>();
                 String id = fields[0].trim();
-                
+
                 // put all fields into the hashmap
                 map.put("ID", id);
                 map.put("Author first name", fields[1].trim());
                 map.put("Author last name", fields[2].trim());
                 map.put("Title", fields[3].trim());
                 map.put("Year", fields[4].trim());
-                
+
                 // create a record and put the hashmap with data to it
                 Record r = new Record();
                 r.setId(id);
                 r.setObject(map);
-                recordList.add(r);                
+                recordList.add(r);
             }
-        
+
         } catch (IOException e) {
             log.error("Error while reading the uploaded file", e);
         }
@@ -210,12 +224,12 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                 Metadata md2 = new Metadata(prefs.getMetadataTypeByName("TitleDocMain"));
                 md2.setValue(map.get("Title"));
                 logical.addMetadata(md2);
-                
+
                 // create metadata field for year
                 Metadata md3 = new Metadata(prefs.getMetadataTypeByName("PublicationYear"));
                 md3.setValue(map.get("Year"));
                 logical.addMetadata(md3);
-                
+
                 // add author
                 Person per = new Person(prefs.getMetadataTypeByName("Author"));
                 per.setFirstname(map.get("Author first name"));
