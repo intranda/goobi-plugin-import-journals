@@ -3,6 +3,8 @@ package de.intranda.goobi.plugins;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +46,14 @@ import ugh.fileformats.mets.MetsMods;
 @Log4j2
 public class JournalsImportPlugin implements IImportPluginVersion2 {
 
+    @Getter
+    private String title = "intranda_import_journals";
+    @Getter
+    private PluginType type = PluginType.Import;
+
+    @Getter
+    private List<ImportType> importTypes;
+
     /*
     - get root folder from configuration file
     - get all journals/newspaper folder within root folder
@@ -59,14 +69,6 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
      */
 
     @Getter
-    private String title = "intranda_import_journals";
-    @Getter
-    private PluginType type = PluginType.Import;
-
-    @Getter
-    private List<ImportType> importTypes;
-
-    @Getter
     @Setter
     private Prefs prefs;
     @Getter
@@ -75,6 +77,8 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
 
     @Getter
     private String catalogueName;
+    @Getter
+    private String basedir;
 
     @Setter
     private MassImportForm form;
@@ -118,7 +122,7 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
         if (myconfig != null) {
             runAsGoobiScript = myconfig.getBoolean("/runAsGoobiScript", false);
             collection = myconfig.getString("/collection", "");
-            importFolder = myconfig.getString("/importFolder", "");
+            basedir = myconfig.getString("/importFolder", "");
             catalogueName = myconfig.getString("/catalogueName", "");
         }
     }
@@ -317,13 +321,28 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
     }
 
     @Override
-    public List<Record> generateRecordsFromFilenames(List<String> arg0) {
-        return null;
+    public List<Record> generateRecordsFromFilenames(List<String> filenames) {
+        List<Record> records = new ArrayList<>();
+        for (String filename : filenames) {
+            Record rec = new Record();
+            rec.setData(filename);
+            rec.setId(filename);
+            records.add(rec);
+        }
+        return records;
     }
 
     @Override
     public List<String> getAllFilenames() {
-        return null;
+        List<String> foldernames = new ArrayList<>();
+        try {
+            Files.find(Paths.get(basedir), 1, (p, file) -> file.isDirectory() && p.getFileName().toString().matches("\\d+X?"))
+            .forEach(p -> foldernames.add(p.getFileName().toString()));
+        } catch (IOException e) {
+            log.error(e);
+        }
+
+        return foldernames;
     }
 
     @Override

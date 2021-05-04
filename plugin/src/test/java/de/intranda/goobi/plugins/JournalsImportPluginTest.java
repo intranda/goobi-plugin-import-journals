@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -63,8 +64,22 @@ public class JournalsImportPluginTest {
         JournalsImportPlugin plugin = new JournalsImportPlugin();
         assertTrue(plugin.isRunnableAsGoobiScript());
         assertEquals("K10+", plugin.getCatalogueName());
-        assertEquals("src/test/resources", plugin.getImportFolder());
+        assertEquals("src/test/resources", plugin.getBasedir());
     }
+
+    @Test
+    public void testGetAllFilenames() {
+        JournalsImportPlugin plugin = new JournalsImportPlugin();
+        assertTrue(plugin.isRunnableAsGoobiScript());
+
+        List<String> foldernames = plugin.getAllFilenames();
+        assertEquals(1,foldernames.size());
+        assertEquals("170621391", foldernames.get(0));
+
+
+    }
+
+
 
     private XMLConfiguration getConfig() {
         String file = "plugin_intranda_import_journals.xml";
