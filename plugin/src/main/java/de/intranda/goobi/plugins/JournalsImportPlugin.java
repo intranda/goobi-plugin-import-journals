@@ -2,7 +2,6 @@ package de.intranda.goobi.plugins;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -13,34 +12,29 @@ import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.importer.DocstructElement;
 import org.goobi.production.importer.ImportObject;
 import org.goobi.production.importer.Record;
 import org.goobi.production.plugin.interfaces.IImportPluginVersion2;
+import org.goobi.production.plugin.interfaces.IOpacPlugin;
 import org.goobi.production.properties.ImportProperty;
 
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.forms.MassImportForm;
 import de.sub.goobi.helper.exceptions.ImportPluginException;
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
 import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
-import ugh.dl.Person;
 import ugh.dl.Prefs;
-import ugh.exceptions.UGHException;
-import ugh.fileformats.mets.MetsMods;
 
 @PluginImplementation
 @Log4j2
@@ -132,49 +126,7 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
      */
     @Override
     public List<Record> generateRecordsFromFile() {
-        if (StringUtils.isBlank(workflowTitle)) {
-            workflowTitle = form.getTemplate().getTitel();
-        }
-        readConfig();
-
-        // the list where the records are stored
-        List<Record> recordList = new ArrayList<>();
-
-        try {
-            // read the file in to generate the records
-            String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-
-            // run through the content line by line
-            String lines[] = content.split("\\r?\\n");
-
-            // generate a record for each process to be created
-            for (String line : lines) {
-
-                // Split the string and generate a hashmap for all needed metadata
-                String fields[] = line.split(";");
-                HashMap<String, String> map = new HashMap<>();
-                String id = fields[0].trim();
-
-                // put all fields into the hashmap
-                map.put("ID", id);
-                map.put("Author first name", fields[1].trim());
-                map.put("Author last name", fields[2].trim());
-                map.put("Title", fields[3].trim());
-                map.put("Year", fields[4].trim());
-
-                // create a record and put the hashmap with data to it
-                Record r = new Record();
-                r.setId(id);
-                r.setObject(map);
-                recordList.add(r);
-            }
-
-        } catch (IOException e) {
-            log.error("Error while reading the uploaded file", e);
-        }
-
-        // return the list of all generated records
-        return recordList;
+        return null;
     }
 
     /**
@@ -190,94 +142,129 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
 
         // some general preparations
         DocStructType physicalType = prefs.getDocStrctTypeByName("BoundBook");
-        DocStructType logicalType = prefs.getDocStrctTypeByName("Monograph");
+        DocStructType anchorType = prefs.getDocStrctTypeByName("Periodical");
+        DocStructType volumeType = prefs.getDocStrctTypeByName("PeriodicalVolume");
+        DocStructType issueType = prefs.getDocStrctTypeByName("PeriodicalIssue");
+
         MetadataType pathimagefilesType = prefs.getMetadataTypeByName("pathimagefiles");
         List<ImportObject> answer = new ArrayList<>();
 
         // run through all records and create a Goobi process for each of it
         for (Record record : records) {
+
+            String folderName = record.getId();
+            List<String> subFolder = null;
+            Fileformat myRdf = getRecordFromCatalogue(record.getId());
+
+            for (String volume : subFolder) {
+
+            }
+
             ImportObject io = new ImportObject();
 
             String id = record.getId().replaceAll("\\W", "_");
             HashMap<String, String> map = (HashMap<String, String>) record.getObject();
 
             // create a new mets file
-            try {
-                Fileformat fileformat = new MetsMods(prefs);
-
-                // create digital document
-                DigitalDocument dd = new DigitalDocument();
-                fileformat.setDigitalDocument(dd);
-
-                // create physical DocStruct
-                DocStruct physical = dd.createDocStruct(physicalType);
-                dd.setPhysicalDocStruct(physical);
-
-                // set imagepath
-                Metadata newmd = new Metadata(pathimagefilesType);
-                newmd.setValue("/images/");
-                physical.addMetadata(newmd);
-
-                // create logical DocStruct
-                DocStruct logical = dd.createDocStruct(logicalType);
-                dd.setLogicalDocStruct(logical);
-
-                // create metadata field for CatalogIDDigital with cleaned value
-                Metadata md1 = new Metadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
-                md1.setValue(map.get("ID").replaceAll("\\W", "_"));
-                logical.addMetadata(md1);
-
-                // create metadata field for main title
-                Metadata md2 = new Metadata(prefs.getMetadataTypeByName("TitleDocMain"));
-                md2.setValue(map.get("Title"));
-                logical.addMetadata(md2);
-
-                // create metadata field for year
-                Metadata md3 = new Metadata(prefs.getMetadataTypeByName("PublicationYear"));
-                md3.setValue(map.get("Year"));
-                logical.addMetadata(md3);
-
-                // add author
-                Person per = new Person(prefs.getMetadataTypeByName("Author"));
-                per.setFirstname(map.get("Author first name"));
-                per.setLastname(map.get("Author last name"));
-                //per.setRole("Author");
-                logical.addPerson(per);
-
-                // create metadata field for configured digital collection
-                MetadataType typeCollection = prefs.getMetadataTypeByName("singleDigCollection");
-                if (StringUtils.isNotBlank(collection)) {
-                    Metadata mdc = new Metadata(typeCollection);
-                    mdc.setValue(collection);
-                    logical.addMetadata(mdc);
-                }
-
-                // and add all collections that where selected
-                if (form != null) {
-                    for (String c : form.getDigitalCollections()) {
-                        if (!c.equals(collection.trim())) {
-                            Metadata md = new Metadata(typeCollection);
-                            md.setValue(c);
-                            logical.addMetadata(md);
-                        }
-                    }
-                }
-
-                // set the title for the Goobi process
-                io.setProcessTitle(id);
-                String fileName = getImportFolder() + File.separator + io.getProcessTitle() + ".xml";
-                io.setMetsFilename(fileName);
-                fileformat.write(fileName);
-                io.setImportReturnValue(ImportReturnValue.ExportFinished);
-            } catch (UGHException e) {
-                log.error("Error while creating Goobi processes in the JournalsImportPlugin", e);
-                io.setImportReturnValue(ImportReturnValue.WriteError);
-            }
+            //            try {
+            //                Fileformat fileformat = new MetsMods(prefs);
+            //
+            //                // create digital document
+            //                DigitalDocument dd = new DigitalDocument();
+            //                fileformat.setDigitalDocument(dd);
+            //
+            //                // create physical DocStruct
+            //                DocStruct physical = dd.createDocStruct(physicalType);
+            //                dd.setPhysicalDocStruct(physical);
+            //
+            //                // set imagepath
+            //                Metadata newmd = new Metadata(pathimagefilesType);
+            //                newmd.setValue("/images/");
+            //                physical.addMetadata(newmd);
+            //
+            //                // create logical DocStruct
+            //                DocStruct logical = dd.createDocStruct(logicalType);
+            //                dd.setLogicalDocStruct(logical);
+            //
+            //                // create metadata field for CatalogIDDigital with cleaned value
+            //                Metadata md1 = new Metadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
+            //                md1.setValue(map.get("ID").replaceAll("\\W", "_"));
+            //                logical.addMetadata(md1);
+            //
+            //                // create metadata field for main title
+            //                Metadata md2 = new Metadata(prefs.getMetadataTypeByName("TitleDocMain"));
+            //                md2.setValue(map.get("Title"));
+            //                logical.addMetadata(md2);
+            //
+            //                // create metadata field for year
+            //                Metadata md3 = new Metadata(prefs.getMetadataTypeByName("PublicationYear"));
+            //                md3.setValue(map.get("Year"));
+            //                logical.addMetadata(md3);
+            //
+            //                // add author
+            //                Person per = new Person(prefs.getMetadataTypeByName("Author"));
+            //                per.setFirstname(map.get("Author first name"));
+            //                per.setLastname(map.get("Author last name"));
+            //                //per.setRole("Author");
+            //                logical.addPerson(per);
+            //
+            //                // create metadata field for configured digital collection
+            //                MetadataType typeCollection = prefs.getMetadataTypeByName("singleDigCollection");
+            //                if (StringUtils.isNotBlank(collection)) {
+            //                    Metadata mdc = new Metadata(typeCollection);
+            //                    mdc.setValue(collection);
+            //                    logical.addMetadata(mdc);
+            //                }
+            //
+            //                // and add all collections that where selected
+            //                if (form != null) {
+            //                    for (String c : form.getDigitalCollections()) {
+            //                        if (!c.equals(collection.trim())) {
+            //                            Metadata md = new Metadata(typeCollection);
+            //                            md.setValue(c);
+            //                            logical.addMetadata(md);
+            //                        }
+            //                    }
+            //                }
+            //
+            //                // set the title for the Goobi process
+            //                io.setProcessTitle(id);
+            //                String fileName = getImportFolder() + File.separator + io.getProcessTitle() + ".xml";
+            //                io.setMetsFilename(fileName);
+            //                fileformat.write(fileName);
+            //                io.setImportReturnValue(ImportReturnValue.ExportFinished);
+            //            } catch (UGHException e) {
+            //                log.error("Error while creating Goobi processes in the JournalsImportPlugin", e);
+            //                io.setImportReturnValue(ImportReturnValue.WriteError);
+            //            }
 
             // now add the process to the list
             answer.add(io);
         }
         return answer;
+    }
+
+    public Fileformat getRecordFromCatalogue(String id) {
+        // opac request for anchor id
+        IOpacPlugin myImportOpac = null;
+        ConfigOpacCatalogue coc = null;
+        ConfigOpac co = ConfigOpac.getInstance();
+        for (ConfigOpacCatalogue configOpacCatalogue : co.getAllCatalogues()) {
+            if (configOpacCatalogue.getTitle().equals(catalogueName)) {
+                myImportOpac = configOpacCatalogue.getOpacPlugin();
+                coc = configOpacCatalogue;
+            }
+        }
+        if (myImportOpac == null) {
+            return null;
+        }
+        Fileformat fileformat = null;
+        try {
+            fileformat = myImportOpac.search("12", id, coc, prefs);
+        } catch (Exception e) {
+            log.error(e);
+        }
+        return fileformat;
     }
 
     /**

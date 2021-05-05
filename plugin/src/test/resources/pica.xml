@@ -1,0 +1,639 @@
+<collection>
+  <record>
+    <field tag="001@">
+      <subfield code="0">11,22,24,26,104,162,203,632,640</subfield>
+    </field>
+    <field tag="001A">
+      <subfield code="0">2004:06-11-94</subfield>
+    </field>
+    <field tag="001B">
+      <subfield code="0">2004:09-06-19</subfield>
+      <subfield code="t">00:43:05.000</subfield>
+    </field>
+    <field tag="001D">
+      <subfield code="0">2004:29-09-96</subfield>
+    </field>
+    <field tag="001U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field tag="001X">
+      <subfield code="0">0</subfield>
+    </field>
+    <field tag="002@">
+      <subfield code="0">Abv</subfield>
+    </field>
+    <field tag="002C">
+      <subfield code="a">Text</subfield>
+      <subfield code="b">txt</subfield>
+    </field>
+    <field tag="002D">
+      <subfield code="a">ohne Hilfsmittel zu benutzen</subfield>
+      <subfield code="b">n</subfield>
+    </field>
+    <field tag="002E">
+      <subfield code="a">Band</subfield>
+      <subfield code="b">nc</subfield>
+    </field>
+    <field tag="003@">
+      <subfield code="0">170621391</subfield>
+    </field>
+    <field tag="003O">
+      <subfield code="a">OCoLC</subfield>
+      <subfield code="0">647241179</subfield>
+      <subfield code="v">2012-12-31</subfield>
+    </field>
+    <field tag="003S">
+      <subfield code="0">434109592</subfield>
+    </field>
+    <field tag="006G">
+      <subfield code="0">016133900</subfield>
+    </field>
+    <field tag="006Z">
+      <subfield code="0">1082554-X</subfield>
+    </field>
+    <field tag="007G">
+      <subfield code="i">ZDB</subfield>
+      <subfield code="0">1082554-X</subfield>
+    </field>
+    <field tag="010@">
+      <subfield code="a">ger</subfield>
+    </field>
+    <field tag="011@">
+      <subfield code="a">1892</subfield>
+      <subfield code="b">1895</subfield>
+      <subfield code="n">1892-1895</subfield>
+    </field>
+    <field tag="013D">
+      <subfield code="9">10454466X</subfield>
+      <subfield code="V">Tsvz</subfield>
+      <subfield code="3">20917000X</subfield>
+      <subfield code="7">gnd/4067488-5</subfield>
+      <subfield code="a">Zeitschrift</subfield>
+    </field>
+    <field tag="018@">
+      <subfield code="a">z</subfield>
+    </field>
+    <field tag="019@">
+      <subfield code="a">XA-DXDE</subfield>
+    </field>
+    <field tag="021A">
+      <subfield code="a">Handbuch für Handel, Verkehr und Industrie der Provinz Schleswig-Holstein-Lauenburg</subfield>
+    </field>
+    <field tag="031@">
+      <subfield code="a">1.1892/93 - 2.1895[?]</subfield>
+    </field>
+    <field tag="031N">
+      <subfield code="d">1</subfield>
+      <subfield code="j">1892/93</subfield>
+      <subfield code="n">2</subfield>
+      <subfield code="k">1895</subfield>
+    </field>
+    <field tag="033A">
+      <subfield code="p">Kiel</subfield>
+      <subfield code="n">Nord-Ostsee-Zeitung</subfield>
+    </field>
+    <field tag="039D">
+      <subfield code="i">Digital. Ausg.</subfield>
+      <subfield code="9">828841144</subfield>
+      <subfield code="R">Obv</subfield>
+      <subfield code="7">zdb/2825402-8</subfield>
+      <subfield code="5">434109584</subfield>
+      <subfield code="t">Handbuch für Handel, Verkehr und Industrie der Provinz Schleswig-Holstein-Lauenburg</subfield>
+      <subfield code="d">Kiel</subfield>
+      <subfield code="e">Nord-Ostsee-Zeitung</subfield>
+      <subfield code="f">1892</subfield>
+      <subfield code="h">Online-Ressource</subfield>
+      <subfield code="C">ZDB</subfield>
+      <subfield code="6">28254028</subfield>
+    </field>
+    <field tag="044K">
+      <subfield code="9">104393955</subfield>
+      <subfield code="V">Tsvz</subfield>
+      <subfield code="7">gnd/4073972-7</subfield>
+      <subfield code="3">209191996</subfield>
+      <subfield code="a">Landeskunde</subfield>
+      <subfield code="A">ARK</subfield>
+    </field>
+    <field tag="044K">
+      <subfield code="9">106171313</subfield>
+      <subfield code="V">Tgv1</subfield>
+      <subfield code="7">gnd/4052692-6</subfield>
+      <subfield code="3">209099356</subfield>
+      <subfield code="A">Schleswig-Holstein</subfield>
+      <subfield code="A">ARK</subfield>
+    </field>
+    <field tag="044K">
+      <subfield code="9">104704861</subfield>
+      <subfield code="V">Tgvz</subfield>
+      <subfield code="7">gnd/4011882-4</subfield>
+      <subfield code="3">208896155</subfield>
+      <subfield code="A">Deutschland</subfield>
+      <subfield code="A">ARK</subfield>
+    </field>
+    <field tag="045G">
+      <subfield code="a">300</subfield>
+      <subfield code="a">330</subfield>
+      <subfield code="A">DE-600</subfield>
+    </field>
+    <field occurrence="01" tag="045Q">
+      <subfield code="9">18157151X</subfield>
+      <subfield code="V">Tkv</subfield>
+      <subfield code="a">15.50</subfield>
+      <subfield code="j">Schleswig-Holstein</subfield>
+      <subfield code="j">Lübeck</subfield>
+      <subfield code="j">Hamburg</subfield>
+      <subfield code="X">Geschichte</subfield>
+      <subfield code="A">ARK</subfield>
+    </field>
+    <field tag="047A">
+      <subfield code="a">Sortierzählung bei Bänden maschinell geändert (GBV)</subfield>
+    </field>
+    <field tag="101@">
+      <subfield code="a">11</subfield>
+      <subfield code="c">PICA</subfield>
+      <subfield code="d">Berlin, Staatsbibliothek zu Berlin - Preußischer Kulturbesitz &lt;1a&gt;</subfield>
+    </field>
+    <field tag="101B">
+      <subfield code="0">29-11-13</subfield>
+      <subfield code="t">13:46:21.000</subfield>
+    </field>
+    <field tag="101U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field tag="102D">
+      <subfield code="0">29-11-13</subfield>
+      <subfield code="b">1657</subfield>
+      <subfield code="a">0001</subfield>
+    </field>
+    <field tag="107F">
+      <subfield code="0">SBRT4618941</subfield>
+    </field>
+    <field occurrence="05" tag="107F">
+      <subfield code="0">SZTC.02057353</subfield>
+    </field>
+    <field occurrence="09" tag="107F">
+      <subfield code="0">06050618</subfield>
+    </field>
+    <field occurrence="11" tag="145S">
+      <subfield code="a">So 7116</subfield>
+      <subfield code="b">So 07116</subfield>
+      <subfield code="9">680674578</subfield>
+      <subfield code="a">So 6746 - So 7162/565</subfield>
+    </field>
+    <field occurrence="09" tag="147B">
+      <subfield code="a">C; b</subfield>
+    </field>
+    <field occurrence="01" tag="201B">
+      <subfield code="0">05-09-20</subfield>
+      <subfield code="t">18:42:20.000</subfield>
+    </field>
+    <field occurrence="01" tag="201U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field occurrence="01" tag="202D">
+      <subfield code="0">05-09-20</subfield>
+      <subfield code="b">SBB_add_monos</subfield>
+      <subfield code="a">1999</subfield>
+    </field>
+    <field occurrence="01" tag="203@">
+      <subfield code="0">446078468</subfield>
+    </field>
+    <field occurrence="01" tag="206X">
+      <subfield code="0">SBRE4662642</subfield>
+    </field>
+    <field occurrence="01" tag="208@">
+      <subfield code="a">01-12-97</subfield>
+      <subfield code="b">b5</subfield>
+    </field>
+    <field occurrence="01" tag="209A">
+      <subfield code="f">1</subfield>
+      <subfield code="a">So 7116</subfield>
+      <subfield code="d">d</subfield>
+      <subfield code="x">00</subfield>
+    </field>
+    <field occurrence="01" tag="209B">
+      <subfield code="a">128§1§19§3§99§§§1§0</subfield>
+      <subfield code="x">31</subfield>
+    </field>
+    <field occurrence="01" tag="209B">
+      <subfield code="a">So7116§§§§§§§§§§</subfield>
+      <subfield code="x">32</subfield>
+    </field>
+    <field occurrence="01" tag="209B">
+      <subfield code="a">Reproduktion nur durch Kopierservice</subfield>
+      <subfield code="x">34</subfield>
+    </field>
+    <field occurrence="01" tag="209G">
+      <subfield code="a">158707941010</subfield>
+    </field>
+    <field occurrence="01" tag="209O">
+      <subfield code="a">ark_2012-03-14</subfield>
+      <subfield code="x">09</subfield>
+    </field>
+    <field occurrence="01" tag="220B">
+      <subfield code="a">ACQ (2.1895)</subfield>
+    </field>
+    <field occurrence="01" tag="220B">
+      <subfield code="a">Originaleinband erhalten</subfield>
+    </field>
+    <field occurrence="01" tag="220B">
+      <subfield code="a">Revision 2010 Hauptmagazin (1.1892/93)</subfield>
+    </field>
+    <field occurrence="01" tag="220B">
+      <subfield code="a">BruÖÖchiges Papier</subfield>
+    </field>
+    <field occurrence="01" tag="231@">
+      <subfield code="d">1</subfield>
+      <subfield code="j">1892/93</subfield>
+      <subfield code="n">2</subfield>
+      <subfield code="k">1895</subfield>
+    </field>
+    <field occurrence="01" tag="231B">
+      <subfield code="a">1.1892/93 - 2.1895</subfield>
+    </field>
+    <field occurrence="01" tag="237A">
+      <subfield code="a">Verlagseinband: 2.1895: hinterer Deckel: "Max Riemer Buchbinderei Kiel."; Gewebe: braun; Typo: schwarz; Prägung: schwarz gold blind; Darstellung: Wappen von Schleswig-Holstein; VEBD.</subfield>
+    </field>
+    <field occurrence="01" tag="237A">
+      <subfield code="a">Reproduktion nur durch Kopierservice</subfield>
+    </field>
+    <field tag="101@">
+      <subfield code="a">162</subfield>
+      <subfield code="c">PICA</subfield>
+      <subfield code="d">Bremerhaven, Deutsches Schifffahrtsmuseum Bibliothek &lt;Bv 3&gt;</subfield>
+    </field>
+    <field tag="101B">
+      <subfield code="0">03-02-14</subfield>
+      <subfield code="t">17:02:37.000</subfield>
+    </field>
+    <field tag="101U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field tag="102D">
+      <subfield code="0">03-02-14</subfield>
+      <subfield code="b">4454</subfield>
+      <subfield code="a">3162</subfield>
+    </field>
+    <field tag="145Z">
+      <subfield code="a">82-2.1</subfield>
+    </field>
+    <field occurrence="01" tag="201B">
+      <subfield code="0">03-02-14</subfield>
+      <subfield code="t">17:01:00.000</subfield>
+    </field>
+    <field occurrence="01" tag="201U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field occurrence="01" tag="202D">
+      <subfield code="0">03-02-14</subfield>
+      <subfield code="b">4454</subfield>
+      <subfield code="a">3162</subfield>
+    </field>
+    <field occurrence="01" tag="203@">
+      <subfield code="0">144380794X</subfield>
+    </field>
+    <field occurrence="01" tag="208@">
+      <subfield code="a">01-11-13</subfield>
+      <subfield code="b">x</subfield>
+    </field>
+    <field tag="101@">
+      <subfield code="a">640</subfield>
+      <subfield code="c">PICA</subfield>
+      <subfield code="d">Hamburg, Handelskammer Hamburg Commerzbibliothek &lt;205&gt;</subfield>
+    </field>
+    <field occurrence="01" tag="201B">
+      <subfield code="0">03-06-13</subfield>
+      <subfield code="t">13:27:49.000</subfield>
+    </field>
+    <field occurrence="01" tag="201U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field occurrence="01" tag="202D">
+      <subfield code="0">03-06-13</subfield>
+      <subfield code="b">1109424</subfield>
+      <subfield code="a">0205</subfield>
+    </field>
+    <field occurrence="01" tag="203@">
+      <subfield code="0">1394220790</subfield>
+    </field>
+    <field occurrence="01" tag="208@">
+      <subfield code="a">03-06-13</subfield>
+      <subfield code="b">x</subfield>
+    </field>
+    <field tag="101@">
+      <subfield code="a">203</subfield>
+      <subfield code="c">PICA</subfield>
+      <subfield code="d">Hamburg, Museumsbibliotheken Hamburg und Denkmalschutzamt &lt;3522&gt;</subfield>
+    </field>
+    <field occurrence="01" tag="201B">
+      <subfield code="0">05-09-17</subfield>
+      <subfield code="t">12:14:18.000</subfield>
+    </field>
+    <field occurrence="01" tag="201U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field occurrence="01" tag="202D">
+      <subfield code="0">05-09-17</subfield>
+      <subfield code="b">4485</subfield>
+      <subfield code="a">3522/0005</subfield>
+    </field>
+    <field occurrence="01" tag="203@">
+      <subfield code="0">1710724846</subfield>
+    </field>
+    <field occurrence="01" tag="208@">
+      <subfield code="a">05-09-17</subfield>
+      <subfield code="b">bm10305</subfield>
+    </field>
+    <field occurrence="01" tag="209A">
+      <subfield code="f">H103</subfield>
+      <subfield code="a">Va 43</subfield>
+      <subfield code="d">i</subfield>
+      <subfield code="x">00</subfield>
+    </field>
+    <field occurrence="01" tag="231@">
+      <subfield code="d">2</subfield>
+      <subfield code="j">1895</subfield>
+    </field>
+    <field occurrence="01" tag="231B">
+      <subfield code="a">2.1895</subfield>
+    </field>
+    <field tag="101@">
+      <subfield code="a">22</subfield>
+      <subfield code="c">PICA</subfield>
+      <subfield code="d">Hamburg, Staats- und Universitätsbibliothek Hamburg / Universität Hamburg &lt;18&gt;</subfield>
+    </field>
+    <field occurrence="01" tag="201B">
+      <subfield code="0">06-09-01</subfield>
+      <subfield code="t">12:44:26.146</subfield>
+    </field>
+    <field occurrence="01" tag="201U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field occurrence="01" tag="202D">
+      <subfield code="0">06-09-01</subfield>
+      <subfield code="b">6018</subfield>
+      <subfield code="a">0000</subfield>
+    </field>
+    <field occurrence="01" tag="203@">
+      <subfield code="0">003872793</subfield>
+    </field>
+    <field occurrence="01" tag="206X">
+      <subfield code="0">23314540/01</subfield>
+    </field>
+    <field occurrence="01" tag="208@">
+      <subfield code="a">03-06-96</subfield>
+      <subfield code="b">bu</subfield>
+    </field>
+    <field occurrence="01" tag="209A">
+      <subfield code="f">SUB</subfield>
+      <subfield code="a">Y/3369</subfield>
+      <subfield code="d">s</subfield>
+      <subfield code="x">00</subfield>
+    </field>
+    <field occurrence="01" tag="231@">
+      <subfield code="d">2</subfield>
+      <subfield code="j">1895</subfield>
+    </field>
+    <field occurrence="01" tag="231B">
+      <subfield code="a">2.1895</subfield>
+    </field>
+    <field tag="101@">
+      <subfield code="a">632</subfield>
+      <subfield code="c">PICA</subfield>
+      <subfield code="d">Kiel, Landeshauptstadt Kiel Stadtarchiv &lt;476&gt;</subfield>
+    </field>
+    <field tag="101B">
+      <subfield code="0">08-03-18</subfield>
+      <subfield code="t">10:58:50.000</subfield>
+    </field>
+    <field tag="101U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field tag="102D">
+      <subfield code="0">08-03-18</subfield>
+      <subfield code="b">9856</subfield>
+      <subfield code="a">0476</subfield>
+    </field>
+    <field tag="144Z">
+      <subfield code="9">613427254</subfield>
+      <subfield code="V">Tdx</subfield>
+      <subfield code="a">Handbücher, Nachschlagewerke</subfield>
+      <subfield code="x">Verzeichnisse</subfield>
+    </field>
+    <field occurrence="01" tag="201B">
+      <subfield code="0">08-03-18</subfield>
+      <subfield code="t">10:58:50.000</subfield>
+    </field>
+    <field occurrence="01" tag="201U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field occurrence="01" tag="202D">
+      <subfield code="0">08-03-18</subfield>
+      <subfield code="b">9856</subfield>
+      <subfield code="a">0476</subfield>
+    </field>
+    <field occurrence="01" tag="203@">
+      <subfield code="0">1757436480</subfield>
+    </field>
+    <field occurrence="01" tag="208@">
+      <subfield code="a">08-03-18</subfield>
+      <subfield code="b">z1</subfield>
+    </field>
+    <field tag="101@">
+      <subfield code="a">104</subfield>
+      <subfield code="c">PICA</subfield>
+      <subfield code="d">Kiel, Schleswig-Holsteinische Landesbibliothek &lt;68&gt;</subfield>
+    </field>
+    <field occurrence="01" tag="201B">
+      <subfield code="0">26-05-17</subfield>
+      <subfield code="t">15:01:40.000</subfield>
+    </field>
+    <field occurrence="01" tag="201U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field occurrence="01" tag="202D">
+      <subfield code="0">26-05-17</subfield>
+      <subfield code="b">6710</subfield>
+      <subfield code="a">0068</subfield>
+    </field>
+    <field occurrence="01" tag="203@">
+      <subfield code="0">1690221801</subfield>
+    </field>
+    <field occurrence="01" tag="208@">
+      <subfield code="a">26-05-17</subfield>
+      <subfield code="b">b</subfield>
+    </field>
+    <field occurrence="01" tag="209A">
+      <subfield code="a">SHo 7</subfield>
+      <subfield code="d">f</subfield>
+      <subfield code="x">00</subfield>
+    </field>
+    <field occurrence="01" tag="231@">
+      <subfield code="d">1</subfield>
+      <subfield code="j">1892/93</subfield>
+      <subfield code="n">2</subfield>
+      <subfield code="k">1895</subfield>
+    </field>
+    <field occurrence="01" tag="231B">
+      <subfield code="a">1.1892/93 - 2.1895</subfield>
+    </field>
+    <field tag="101@">
+      <subfield code="a">24</subfield>
+      <subfield code="c">PICA</subfield>
+      <subfield code="d">Kiel, Universitätsbibliothek Kiel &lt;8&gt;</subfield>
+    </field>
+    <field occurrence="03" tag="201A">
+      <subfield code="0">29-09-20</subfield>
+    </field>
+    <field occurrence="03" tag="201B">
+      <subfield code="0">29-09-20</subfield>
+      <subfield code="t">12:00:42.000</subfield>
+    </field>
+    <field occurrence="03" tag="201U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field occurrence="03" tag="202D">
+      <subfield code="0">29-09-20</subfield>
+      <subfield code="b">7484</subfield>
+      <subfield code="a">0008/0100</subfield>
+    </field>
+    <field occurrence="03" tag="203@">
+      <subfield code="0">3763843116</subfield>
+    </field>
+    <field occurrence="03" tag="208@">
+      <subfield code="a">29-09-20</subfield>
+      <subfield code="b">bf100</subfield>
+    </field>
+    <field occurrence="03" tag="209A">
+      <subfield code="f">8/100</subfield>
+      <subfield code="a">E I 2450</subfield>
+      <subfield code="d">i</subfield>
+      <subfield code="x">00</subfield>
+    </field>
+    <field occurrence="03" tag="231@">
+      <subfield code="d">1</subfield>
+      <subfield code="j">1892/93</subfield>
+      <subfield code="n">2</subfield>
+      <subfield code="k">1895</subfield>
+    </field>
+    <field occurrence="04" tag="201B">
+      <subfield code="0">30-06-15</subfield>
+      <subfield code="t">11:15:15.000</subfield>
+    </field>
+    <field occurrence="04" tag="201U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field occurrence="04" tag="202D">
+      <subfield code="0">30-06-15</subfield>
+      <subfield code="b">6345</subfield>
+      <subfield code="a">0008</subfield>
+    </field>
+    <field occurrence="04" tag="203@">
+      <subfield code="0">1336681403</subfield>
+    </field>
+    <field occurrence="04" tag="208@">
+      <subfield code="a">01-11-12</subfield>
+      <subfield code="b">bz1</subfield>
+    </field>
+    <field occurrence="04" tag="209A">
+      <subfield code="b">0008</subfield>
+      <subfield code="f">19</subfield>
+      <subfield code="a">Einzelsignaturen</subfield>
+      <subfield code="d">s</subfield>
+      <subfield code="x">00</subfield>
+    </field>
+    <field occurrence="04" tag="209B">
+      <subfield code="a">acq</subfield>
+      <subfield code="x">50</subfield>
+    </field>
+    <field occurrence="04" tag="209O">
+      <subfield code="a">hb</subfield>
+      <subfield code="x">00</subfield>
+    </field>
+    <field occurrence="04" tag="231@">
+      <subfield code="d">1</subfield>
+      <subfield code="j">1892/93</subfield>
+    </field>
+    <field occurrence="04" tag="237A">
+      <subfield code="a">*1</subfield>
+    </field>
+    <field occurrence="04" tag="237A">
+      <subfield code="a">1.1892/93 vorhanden unter Q 4286</subfield>
+    </field>
+    <field occurrence="05" tag="201B">
+      <subfield code="0">30-06-15</subfield>
+      <subfield code="t">11:15:15.000</subfield>
+    </field>
+    <field occurrence="05" tag="201U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field occurrence="05" tag="202D">
+      <subfield code="0">30-06-15</subfield>
+      <subfield code="b">6345</subfield>
+      <subfield code="a">0008</subfield>
+    </field>
+    <field occurrence="05" tag="203@">
+      <subfield code="0">1550947044</subfield>
+    </field>
+    <field occurrence="05" tag="208@">
+      <subfield code="a">30-06-15</subfield>
+      <subfield code="b">bz1</subfield>
+    </field>
+    <field occurrence="05" tag="209A">
+      <subfield code="b">0008</subfield>
+      <subfield code="f">19</subfield>
+      <subfield code="a">Ya 135</subfield>
+      <subfield code="d">s</subfield>
+      <subfield code="x">00</subfield>
+    </field>
+    <field occurrence="05" tag="209O">
+      <subfield code="a">hb</subfield>
+      <subfield code="x">00</subfield>
+    </field>
+    <field occurrence="05" tag="231@">
+      <subfield code="d">2</subfield>
+      <subfield code="j">1895</subfield>
+    </field>
+    <field occurrence="05" tag="237A">
+      <subfield code="a">*1</subfield>
+    </field>
+    <field tag="101@">
+      <subfield code="a">26</subfield>
+      <subfield code="c">PICA</subfield>
+      <subfield code="d">Kiel, ZBW  Leibniz-Informationszentrum Wirtschaft &lt;206&gt;</subfield>
+    </field>
+    <field occurrence="01" tag="201B">
+      <subfield code="0">02-11-12</subfield>
+      <subfield code="t">14:13:22.000</subfield>
+    </field>
+    <field occurrence="01" tag="201U">
+      <subfield code="0">utf8</subfield>
+    </field>
+    <field occurrence="01" tag="202D">
+      <subfield code="0">02-11-12</subfield>
+      <subfield code="b">7828</subfield>
+      <subfield code="a">0206</subfield>
+    </field>
+    <field occurrence="01" tag="203@">
+      <subfield code="0">1337315362</subfield>
+    </field>
+    <field occurrence="01" tag="208@">
+      <subfield code="a">02-11-12</subfield>
+      <subfield code="b">b1k</subfield>
+    </field>
+    <field occurrence="01" tag="209A">
+      <subfield code="b">0206</subfield>
+      <subfield code="f">K:</subfield>
+      <subfield code="a">Einzelsign.</subfield>
+      <subfield code="d">b</subfield>
+      <subfield code="x">00</subfield>
+    </field>
+    <field occurrence="01" tag="231@">
+      <subfield code="d">1</subfield>
+      <subfield code="j">1892/93</subfield>
+    </field>
+    <field occurrence="01" tag="231B">
+      <subfield code="a">1.1892/93</subfield>
+    </field>
+  </record>
+  </collection>

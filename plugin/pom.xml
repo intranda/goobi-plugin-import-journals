@@ -63,6 +63,11 @@
 			<artifactId>goobi-core-jar</artifactId>
 			<version>21.03.2</version>
 		</dependency>
+        <dependency>
+            <groupId>de.intranda.goobi.plugins.opac</groupId>
+    <artifactId>pica</artifactId>
+    <version>1.0.0</version>
+        </dependency>
        <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
             <groupId>junit</groupId>
