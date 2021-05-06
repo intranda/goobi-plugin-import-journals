@@ -3,9 +3,9 @@ package de.intranda.goobi.plugins;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.configuration.SubnodeConfiguration;
@@ -31,10 +31,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import ugh.dl.DigitalDocument;
+import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
 import ugh.dl.Fileformat;
+import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
+import ugh.exceptions.UGHException;
+import ugh.fileformats.mets.MetsMods;
 
 @PluginImplementation
 @Log4j2
@@ -133,7 +138,6 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
      * This method is used to actually create the Goobi processes this is done based on previously created records
      */
     @Override
-    @SuppressWarnings("unchecked")
     public List<ImportObject> generateFiles(List<Record> records) {
         if (StringUtils.isBlank(workflowTitle)) {
             workflowTitle = form.getTemplate().getTitel();
@@ -141,105 +145,156 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
         readConfig();
 
         // some general preparations
-        DocStructType physicalType = prefs.getDocStrctTypeByName("BoundBook");
-        DocStructType anchorType = prefs.getDocStrctTypeByName("Periodical");
-        DocStructType volumeType = prefs.getDocStrctTypeByName("PeriodicalVolume");
         DocStructType issueType = prefs.getDocStrctTypeByName("PeriodicalIssue");
+        DocStructType pageType = prefs.getDocStrctTypeByName("page");
 
-        MetadataType pathimagefilesType = prefs.getMetadataTypeByName("pathimagefiles");
+        // log + phys page no
+        MetadataType physPageNumberType = prefs.getMetadataTypeByName("physPageNumber");
+        MetadataType logicalPageNumberType = prefs.getMetadataTypeByName("logicalPageNumber");
+
+        MetadataType pulicationYearType = prefs.getMetadataTypeByName("PublicationYear");
+        MetadataType currentNoType = prefs.getMetadataTypeByName("CurrentNo");
+        MetadataType currentNoSortType = prefs.getMetadataTypeByName("CurrentNoSorting");
+        MetadataType titleType = prefs.getMetadataTypeByName("TitleDocMain");
+
+        MetadataType catalogIdSourceType = prefs.getMetadataTypeByName("CatalogIDSource");
+        MetadataType catalogIdDigitalType = prefs.getMetadataTypeByName("CatalogIDDigital");
+
         List<ImportObject> answer = new ArrayList<>();
 
         // run through all records and create a Goobi process for each of it
         for (Record record : records) {
 
             String folderName = record.getId();
-            List<String> subFolder = null;
-            Fileformat myRdf = getRecordFromCatalogue(record.getId());
-
-            for (String volume : subFolder) {
-
+            List<String> subFolder = new ArrayList<>();
+            try {
+                Files.find(Paths.get(basedir, folderName), 1, (p, file) -> file.isDirectory() && p.getFileName().toString().matches("\\d+X?_\\d{4}")
+                        || p.getFileName().toString().matches("\\d{4}")).forEach(p -> subFolder.add(p.getFileName().toString()));
+            } catch (IOException e) {
+                log.error(e);
             }
 
-            ImportObject io = new ImportObject();
+            for (String volumeFolder : subFolder) {
+                Fileformat fileformat = getRecordFromCatalogue(record.getId());
+                ImportObject io = new ImportObject();
 
-            String id = record.getId().replaceAll("\\W", "_");
-            HashMap<String, String> map = (HashMap<String, String>) record.getObject();
+                if (fileformat == null) {
+                    // TODO error and continue with next one
+                    continue;
+                }
+                try {
+                    DigitalDocument digDoc = fileformat.getDigitalDocument();
+                    DocStruct anchor = digDoc.getLogicalDocStruct();
+                    DocStruct volume = anchor.getAllChildren().get(0);
+                    DocStruct physical = digDoc.getPhysicalDocStruct();
+                    String year = volumeFolder.replace(record.getId(), "").replace("_", "");
 
-            // create a new mets file
-            //            try {
-            //                Fileformat fileformat = new MetsMods(prefs);
-            //
-            //                // create digital document
-            //                DigitalDocument dd = new DigitalDocument();
-            //                fileformat.setDigitalDocument(dd);
-            //
-            //                // create physical DocStruct
-            //                DocStruct physical = dd.createDocStruct(physicalType);
-            //                dd.setPhysicalDocStruct(physical);
-            //
-            //                // set imagepath
-            //                Metadata newmd = new Metadata(pathimagefilesType);
-            //                newmd.setValue("/images/");
-            //                physical.addMetadata(newmd);
-            //
-            //                // create logical DocStruct
-            //                DocStruct logical = dd.createDocStruct(logicalType);
-            //                dd.setLogicalDocStruct(logical);
-            //
-            //                // create metadata field for CatalogIDDigital with cleaned value
-            //                Metadata md1 = new Metadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
-            //                md1.setValue(map.get("ID").replaceAll("\\W", "_"));
-            //                logical.addMetadata(md1);
-            //
-            //                // create metadata field for main title
-            //                Metadata md2 = new Metadata(prefs.getMetadataTypeByName("TitleDocMain"));
-            //                md2.setValue(map.get("Title"));
-            //                logical.addMetadata(md2);
-            //
-            //                // create metadata field for year
-            //                Metadata md3 = new Metadata(prefs.getMetadataTypeByName("PublicationYear"));
-            //                md3.setValue(map.get("Year"));
-            //                logical.addMetadata(md3);
-            //
-            //                // add author
-            //                Person per = new Person(prefs.getMetadataTypeByName("Author"));
-            //                per.setFirstname(map.get("Author first name"));
-            //                per.setLastname(map.get("Author last name"));
-            //                //per.setRole("Author");
-            //                logical.addPerson(per);
-            //
-            //                // create metadata field for configured digital collection
-            //                MetadataType typeCollection = prefs.getMetadataTypeByName("singleDigCollection");
-            //                if (StringUtils.isNotBlank(collection)) {
-            //                    Metadata mdc = new Metadata(typeCollection);
-            //                    mdc.setValue(collection);
-            //                    logical.addMetadata(mdc);
-            //                }
-            //
-            //                // and add all collections that where selected
-            //                if (form != null) {
-            //                    for (String c : form.getDigitalCollections()) {
-            //                        if (!c.equals(collection.trim())) {
-            //                            Metadata md = new Metadata(typeCollection);
-            //                            md.setValue(c);
-            //                            logical.addMetadata(md);
-            //                        }
-            //                    }
-            //                }
-            //
-            //                // set the title for the Goobi process
-            //                io.setProcessTitle(id);
-            //                String fileName = getImportFolder() + File.separator + io.getProcessTitle() + ".xml";
-            //                io.setMetsFilename(fileName);
-            //                fileformat.write(fileName);
-            //                io.setImportReturnValue(ImportReturnValue.ExportFinished);
-            //            } catch (UGHException e) {
-            //                log.error("Error while creating Goobi processes in the JournalsImportPlugin", e);
-            //                io.setImportReturnValue(ImportReturnValue.WriteError);
-            //            }
+                    // check if anchor id is missing
+                    List<? extends Metadata> anchorIds = anchor.getAllMetadataByType(catalogIdDigitalType);
+                    if (anchorIds.isEmpty()) {
+                        Metadata anchorIdentifier = new Metadata(catalogIdDigitalType);
+                        anchorIdentifier.setValue(folderName);
+                        anchor.addMetadata(anchorIdentifier);
+                    }
 
+                    // add PublicationYear, CurrentNo and CurrentNoSorting to volume
+                    Metadata publicationYear = new Metadata(pulicationYearType);
+                    publicationYear.setValue(year);
+                    volume.addMetadata(publicationYear);
+
+                    Metadata currentNo = new Metadata(currentNoType);
+                    currentNo.setValue(year);
+                    volume.addMetadata(currentNo);
+
+                    Metadata currentNoSort = new Metadata(currentNoSortType);
+                    currentNoSort.setValue(year);
+                    volume.addMetadata(currentNoSort);
+
+                    Metadata volumeIdentifier = new Metadata(catalogIdDigitalType);
+                    volumeIdentifier.setValue(folderName + "_" + year);
+                    volume.addMetadata(volumeIdentifier);
+
+
+                    // check, if volumeFolder contains images or sub folder
+                    List<Path> images = new ArrayList<>();
+                    try {
+                        Files.find(Paths.get(basedir, folderName, volumeFolder), 2, (p, file) -> file.isRegularFile()).forEach(p -> images.add(p));
+                    } catch (IOException e) {
+                        log.error(e);
+                    }
+                    int physicalOrderNumber = 1;
+                    for (Path image : images) {
+
+                        // create image element
+                        DocStruct dsPage = digDoc.createDocStruct(pageType);
+                        Metadata physNo = new Metadata(physPageNumberType);
+                        physNo.setValue(String.valueOf(physicalOrderNumber));
+                        physicalOrderNumber++;
+                        dsPage.addMetadata(physNo);
+                        // TODO generate new filename to avoid collisions
+                        dsPage.setImageName(image.getFileName().toString());
+
+                        Metadata logicalPageNumber = new Metadata(logicalPageNumberType);
+                        logicalPageNumber.setValue("uncounted");
+                        dsPage.addMetadata(logicalPageNumber);
+
+                        // add image to the volume
+                        physical.addChild(dsPage);
+
+                        // check if image is in a sub folder
+                        String parentFolder = image.getParent().getFileName().toString();
+                        if (!parentFolder.equals(volumeFolder)) {
+                            // image belongs to an issue
+                            // check if issue exists
+                            DocStruct currentIssue = null;
+                            if (volume.getAllChildren() != null) {
+                                for (DocStruct issue : volume.getAllChildren()) {
+                                    // get issue title, compare it with folder name
+                                    for (Metadata md : issue.getAllMetadata()) {
+                                        if (md.getType().getName().equals(titleType.getName())) {
+                                            if (md.getValue().equals(parentFolder)) {
+                                                currentIssue = issue;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            // or create it
+                            if (currentIssue == null) {
+                                currentIssue = digDoc.createDocStruct(issueType);
+                                volume.addChild(currentIssue);
+                                Metadata title = new Metadata(titleType);
+                                title.setValue(parentFolder);
+                                currentIssue.addMetadata(title);
+                            }
+
+                            // add image to issue and volume
+                            currentIssue.addReferenceTo(dsPage, "logical_physical");
+                        }
+
+                        volume.addReferenceTo(dsPage, "logical_physical");
+                    }
+
+                    // TODO collection
+
+                    // save mets file,
+                    String metsfilename = Paths.get(importFolder, folderName + "_" + year + ".xml").toString();
+                    MetsMods mm = new MetsMods(prefs);
+                    mm.setDigitalDocument(digDoc);
+                    mm.write(metsfilename);
+                    io.setMetsFilename(metsfilename);
+                    io.setProcessTitle(folderName + "_" + year + ".xml");
+                    // TODO copy/move images, use new file names
+
+                    // TODO cleanup
+
+                } catch (UGHException e) {
+                    log.error(e);
+                }
+
+                answer.add(io);
+            }
             // now add the process to the list
-            answer.add(io);
         }
         return answer;
     }

@@ -16,6 +16,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.easymock.EasyMock;
 import org.goobi.production.enums.ImportType;
+import org.goobi.production.importer.ImportObject;
 import org.goobi.production.importer.Record;
 import org.junit.Before;
 import org.junit.Rule;
@@ -66,7 +67,7 @@ public class JournalsImportPluginTest {
         EasyMock.expect(configOpacMock.getAllCatalogues()).andReturn(getAllCatalogues()).anyTimes();
         EasyMock.expect(configOpacMock.getDoctypeByMapping(EasyMock.anyString(), EasyMock.anyString())).andReturn(cod).anyTimes();
         EasyMock.replay(configOpacMock);
-        // TODO
+
         PowerMock.mockStatic(ConfigOpac.class);
         EasyMock.expect(ConfigOpac.getInstance()).andReturn(configOpacMock).anyTimes();
         PowerMock.replay(ConfigOpac.class);
@@ -131,6 +132,25 @@ public class JournalsImportPluginTest {
         Fileformat ff = plugin.getRecordFromCatalogue("170621391");
 
         assertEquals("Periodical", ff.getDigitalDocument().getLogicalDocStruct().getType().getName());
+    }
+
+    @Test
+    public void testGenerateFiles() throws Exception {
+        JournalsImportPlugin plugin = new JournalsImportPlugin();
+        assertTrue(plugin.isRunnableAsGoobiScript());
+        plugin.setWorkflowTitle("666");
+        Prefs prefs = new Prefs();
+        prefs.loadPrefs(resourcesFolder + "ruleset.xml");
+        plugin.setPrefs(prefs);
+
+        plugin.setImportFolder(tempFolder.toString());
+
+        List<String> foldernames = plugin.getAllFilenames();
+        List<Record> records = plugin.generateRecordsFromFilenames(foldernames);
+        List<ImportObject> fixture = plugin.generateFiles(records);
+        ImportObject io = fixture.get(0);
+
+
     }
 
     private XMLConfiguration getConfig() {
