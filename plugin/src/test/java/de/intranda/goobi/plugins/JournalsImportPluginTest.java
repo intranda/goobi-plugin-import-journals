@@ -74,8 +74,11 @@ public class JournalsImportPluginTest {
 
         ConfigurationHelper configurationHelperMock = EasyMock.createMock(ConfigurationHelper.class);
         EasyMock.expect(configurationHelperMock.isUseProxy()).andReturn(false).anyTimes();
+        EasyMock.expect(configurationHelperMock.useS3()).andReturn(false).anyTimes();
+
         EasyMock.expect(configurationHelperMock.getDebugFolder()).andReturn("").anyTimes();
         EasyMock.expect(configurationHelperMock.getConfigurationFolder()).andReturn(resourcesFolder).anyTimes();
+        EasyMock.expect(configurationHelperMock.getProcessImagesMasterDirectoryName()).andReturn("master").anyTimes();
         EasyMock.replay(configurationHelperMock);
 
         PowerMock.mockStatic(ConfigurationHelper.class);

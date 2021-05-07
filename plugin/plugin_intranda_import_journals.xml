@@ -10,5 +10,8 @@
         
         <!-- opac name, must match a name in goobi_opac.xml -->
         <catalogueName>K10+</catalogueName>
+        
+        <!-- define how the images are imported. Possible values are copy, move, ignore -->
+        <imageImportStrategy>copy</imageImportStrategy>
     </config>
 </config_plugin>

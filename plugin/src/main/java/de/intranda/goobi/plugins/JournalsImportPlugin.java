@@ -23,7 +23,9 @@ import org.goobi.production.plugin.interfaces.IOpacPlugin;
 import org.goobi.production.properties.ImportProperty;
 
 import de.sub.goobi.config.ConfigPlugins;
+import de.sub.goobi.config.ConfigurationHelper;
 import de.sub.goobi.forms.MassImportForm;
+import de.sub.goobi.helper.StorageProvider;
 import de.sub.goobi.helper.exceptions.ImportPluginException;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
@@ -93,6 +95,9 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
     private String workflowTitle;
 
     private boolean runAsGoobiScript = false;
+
+    private String imageImportStrategy;
+
     private String collection;
 
     /**
@@ -123,6 +128,8 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
             collection = myconfig.getString("/collection", "");
             basedir = myconfig.getString("/importFolder", "");
             catalogueName = myconfig.getString("/catalogueName", "");
+
+            imageImportStrategy = myconfig.getString("/imageImportStrategy", "copy");
         }
     }
 
@@ -267,7 +274,7 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                                 title.setValue(parentFolder);
                                 currentIssue.addMetadata(title);
                             }
-
+                            dsPage.setImageName(parentFolder.replaceAll("\\W", "") + "_" + image.getFileName().toString());
                             // add image to issue and volume
                             currentIssue.addReferenceTo(dsPage, "logical_physical");
                         }
@@ -286,7 +293,38 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     io.setProcessTitle(folderName + "_" + year + ".xml");
                     // TODO copy/move images, use new file names
 
+                    if (!"ignore".equalsIgnoreCase(imageImportStrategy)) {
+
+                        String foldername = metsfilename.replace(".xml", "");
+
+                        String folderNameRule = ConfigurationHelper.getInstance().getProcessImagesMasterDirectoryName();
+                        folderNameRule = folderNameRule.replace("{processtitle}", io.getProcessTitle());
+
+                        Path path = Paths.get(foldername, "images", folderNameRule);
+                        try {
+                            Files.createDirectories(path);
+                            for (Path image : images) {
+                                Path destination = null;
+                                String parentFolder = image.getParent().getFileName().toString();
+                                if (!parentFolder.equals(volumeFolder)) {
+                                    destination =
+                                            Paths.get(path.toString(), parentFolder.replaceAll("\\W", "") + "_" + image.getFileName().toString());
+                                } else {
+                                    destination = Paths.get(path.toString(), image.getFileName().toString());
+                                }
+
+                                if ("copy".equalsIgnoreCase(imageImportStrategy)) {
+                                    StorageProvider.getInstance().copyFile(image, destination);
+                                } else if ("move".equalsIgnoreCase(imageImportStrategy)) {
+                                    StorageProvider.getInstance().move(image, destination);
+                                }
+                            }
+                        } catch (IOException e) {
+                            log.error(e);
+                        }
+                    }
                     // TODO cleanup
+                    // remove empty folder if imageImportStrategy was set to move
 
                 } catch (UGHException e) {
                     log.error(e);
