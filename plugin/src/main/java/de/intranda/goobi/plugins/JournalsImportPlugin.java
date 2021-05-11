@@ -13,6 +13,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
 import org.apache.commons.lang.StringUtils;
+import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.importer.DocstructElement;
@@ -128,7 +129,6 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
             collection = myconfig.getString("/collection", "");
             basedir = myconfig.getString("/importFolder", "");
             catalogueName = myconfig.getString("/catalogueName", "");
-
             imageImportStrategy = myconfig.getString("/imageImportStrategy", "copy");
         }
     }
@@ -164,7 +164,9 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
         MetadataType currentNoSortType = prefs.getMetadataTypeByName("CurrentNoSorting");
         MetadataType titleType = prefs.getMetadataTypeByName("TitleDocMain");
 
-        MetadataType catalogIdSourceType = prefs.getMetadataTypeByName("CatalogIDSource");
+        //        MetadataType catalogIdSourceType = prefs.getMetadataTypeByName("CatalogIDSource");
+        MetadataType collectionType = prefs.getMetadataTypeByName("singleDigCollection");
+
         MetadataType catalogIdDigitalType = prefs.getMetadataTypeByName("CatalogIDDigital");
 
         List<ImportObject> answer = new ArrayList<>();
@@ -182,11 +184,30 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
             }
 
             for (String volumeFolder : subFolder) {
+
+                // check, if volumeFolder contains images or sub folder
+                List<Path> images = new ArrayList<>();
+
+                Path currentFolder = Paths.get(basedir, folderName, volumeFolder);
+
+                try {
+                    Files.find(currentFolder, 2, (p, file) -> file.isRegularFile()).forEach(p -> images.add(p));
+                } catch (IOException e) {
+                    log.error(e);
+                }
+                if (images.isEmpty()) {
+                    // nothing to import, skip folder
+                    continue;
+                }
+
                 Fileformat fileformat = getRecordFromCatalogue(record.getId());
                 ImportObject io = new ImportObject();
-
+                answer.add(io);
                 if (fileformat == null) {
-                    // TODO error and continue with next one
+                    // set current import to error and continue with next one
+                    io.setErrorMessage("Cannot get opac data for '" + volumeFolder + "'");
+                    io.setImportReturnValue(ImportReturnValue.InvalidData);
+                    io.setProcessTitle(volumeFolder);
                     continue;
                 }
                 try {
@@ -221,14 +242,6 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     volumeIdentifier.setValue(folderName + "_" + year);
                     volume.addMetadata(volumeIdentifier);
 
-
-                    // check, if volumeFolder contains images or sub folder
-                    List<Path> images = new ArrayList<>();
-                    try {
-                        Files.find(Paths.get(basedir, folderName, volumeFolder), 2, (p, file) -> file.isRegularFile()).forEach(p -> images.add(p));
-                    } catch (IOException e) {
-                        log.error(e);
-                    }
                     int physicalOrderNumber = 1;
                     for (Path image : images) {
 
@@ -238,7 +251,7 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                         physNo.setValue(String.valueOf(physicalOrderNumber));
                         physicalOrderNumber++;
                         dsPage.addMetadata(physNo);
-                        // TODO generate new filename to avoid collisions
+
                         dsPage.setImageName(image.getFileName().toString());
 
                         Metadata logicalPageNumber = new Metadata(logicalPageNumberType);
@@ -282,7 +295,27 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                         volume.addReferenceTo(dsPage, "logical_physical");
                     }
 
-                    // TODO collection
+                    if (record.getCollections() != null && !record.getCollections().isEmpty()) {
+                        // use selected collection
+                        for (String col : record.getCollections()) {
+                            if (StringUtils.isNotBlank(col)) {
+                                Metadata md = new Metadata(collectionType);
+                                md.setValue(col);
+                                anchor.addMetadata(md);
+                                md = new Metadata(collectionType);
+                                md.setValue(col);
+                                volume.addMetadata(md);
+                            }
+                        }
+                    } else if (StringUtils.isNotBlank(collection)) {
+                        // use configured collection
+                        Metadata md = new Metadata(collectionType);
+                        md.setValue(collection);
+                        anchor.addMetadata(md);
+                        md = new Metadata(collectionType);
+                        md.setValue(collection);
+                        volume.addMetadata(md);
+                    }
 
                     // save mets file,
                     String metsfilename = Paths.get(importFolder, folderName + "_" + year + ".xml").toString();
@@ -291,7 +324,8 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     mm.write(metsfilename);
                     io.setMetsFilename(metsfilename);
                     io.setProcessTitle(folderName + "_" + year + ".xml");
-                    // TODO copy/move images, use new file names
+                    io.setImportReturnValue(ImportReturnValue.ExportFinished);
+                    // copy/move images, use new file names
 
                     if (!"ignore".equalsIgnoreCase(imageImportStrategy)) {
 
@@ -323,14 +357,34 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                             log.error(e);
                         }
                     }
-                    // TODO cleanup
-                    // remove empty folder if imageImportStrategy was set to move
-
+                    // cleanup
+                    if ("move".equalsIgnoreCase(imageImportStrategy)) {
+                        // remove empty folder if imageImportStrategy was set to move
+                        // check if volumeFolder contains empty sub folder, remove them
+                        List<Path> subdirs = StorageProvider.getInstance().listFiles(currentFolder.toString());
+                        for (Path dir : subdirs) {
+                            try {
+                                Files.delete(dir);
+                            } catch (IOException e) {
+                                // folder cannot be deleted, probably because it is not empty
+                                log.error(e);
+                            }
+                        }
+                        // check if volumeFolder is empty, remove it
+                        try {
+                            Files.delete(currentFolder);
+                        } catch (IOException e) {
+                            // folder cannot be deleted, probably because it is not empty
+                            log.error(e);
+                        }
+                    }
                 } catch (UGHException e) {
                     log.error(e);
-                }
+                    io.setErrorMessage("Cannot add additional metadata to '" + volumeFolder + "'");
+                    io.setImportReturnValue(ImportReturnValue.InvalidData);
 
-                answer.add(io);
+
+                }
             }
             // now add the process to the list
         }
