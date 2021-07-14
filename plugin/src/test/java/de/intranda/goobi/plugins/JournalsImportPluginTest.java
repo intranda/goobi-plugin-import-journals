@@ -15,6 +15,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.easymock.EasyMock;
+import org.goobi.beans.Process;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.importer.ImportObject;
 import org.goobi.production.importer.Record;
@@ -30,6 +31,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.config.ConfigurationHelper;
+import de.sub.goobi.forms.MassImportForm;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
@@ -38,14 +40,14 @@ import ugh.dl.Prefs;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ConfigPlugins.class, ConfigOpac.class, ConfigurationHelper.class })
-@PowerMockIgnore({ "javax.management.*", "javax.net.ssl.*" })
+@PowerMockIgnore({ "javax.management.*", "javax.net.ssl.*", "jdk.internal.reflect.*" })
 public class JournalsImportPluginTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
     private File tempFolder;
     private String resourcesFolder;
-
+    private  MassImportForm mif;
     @Before
     public void setUp() throws Exception {
         tempFolder = folder.newFolder("tmp");
@@ -75,6 +77,7 @@ public class JournalsImportPluginTest {
         ConfigurationHelper configurationHelperMock = EasyMock.createMock(ConfigurationHelper.class);
         EasyMock.expect(configurationHelperMock.isUseProxy()).andReturn(false).anyTimes();
         EasyMock.expect(configurationHelperMock.useS3()).andReturn(false).anyTimes();
+        EasyMock.expect(configurationHelperMock.getMetsEditorLockingTime()).andReturn(1000l).anyTimes();
 
         EasyMock.expect(configurationHelperMock.getDebugFolder()).andReturn("").anyTimes();
         EasyMock.expect(configurationHelperMock.getConfigurationFolder()).andReturn(resourcesFolder).anyTimes();
@@ -84,6 +87,11 @@ public class JournalsImportPluginTest {
         PowerMock.mockStatic(ConfigurationHelper.class);
         EasyMock.expect(ConfigurationHelper.getInstance()).andReturn(configurationHelperMock).anyTimes();
         PowerMock.replay(ConfigurationHelper.class);
+
+        mif = new MassImportForm();
+        Process template = new Process();
+        template.setTitel("test");
+        mif.setTemplate(template);
     }
 
     @Test
@@ -105,6 +113,7 @@ public class JournalsImportPluginTest {
     @Test
     public void testGetAllFilenames() {
         JournalsImportPlugin plugin = new JournalsImportPlugin();
+        plugin.setForm(mif);
         assertTrue(plugin.isRunnableAsGoobiScript());
 
         List<String> foldernames = plugin.getAllFilenames();
@@ -115,6 +124,7 @@ public class JournalsImportPluginTest {
     @Test
     public void testGenerateRecordsFromFilenames() {
         JournalsImportPlugin plugin = new JournalsImportPlugin();
+        plugin.setForm(mif);
         assertTrue(plugin.isRunnableAsGoobiScript());
 
         List<String> foldernames = plugin.getAllFilenames();

@@ -217,6 +217,10 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     DocStruct physical = digDoc.getPhysicalDocStruct();
                     String year = volumeFolder.replace(record.getId(), "").replace("_", "");
 
+                    Metadata imagePath = new Metadata(prefs.getMetadataTypeByName("pathimagefiles"));
+                    imagePath.setValue("./images/");
+                    physical.addMetadata(imagePath);
+
                     // check if anchor id is missing
                     List<? extends Metadata> anchorIds = anchor.getAllMetadataByType(catalogIdDigitalType);
                     if (anchorIds.isEmpty()) {
@@ -323,7 +327,7 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     mm.setDigitalDocument(digDoc);
                     mm.write(metsfilename);
                     io.setMetsFilename(metsfilename);
-                    io.setProcessTitle(folderName + "_" + year + ".xml");
+                    io.setProcessTitle(folderName + "_" + year );
                     io.setImportReturnValue(ImportReturnValue.ExportFinished);
                     // copy/move images, use new file names
 
@@ -468,6 +472,11 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
 
     @Override
     public List<String> getAllFilenames() {
+        if (StringUtils.isBlank(workflowTitle)) {
+            workflowTitle = form.getTemplate().getTitel();
+        }
+        readConfig();
+
         List<String> foldernames = new ArrayList<>();
         try {
             Files.find(Paths.get(basedir), 1, (p, file) -> file.isDirectory() && p.getFileName().toString().matches("\\d+X?"))
