@@ -249,58 +249,57 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     int physicalOrderNumber = 1;
                     for (Path image : images) {
 
-                        if (image.getFileName().toString().endsWith(".pfd")) {
-                            continue;
-                        }
+                        if (!image.getFileName().toString().endsWith(".pdf")) {
 
-                        // create image element
-                        DocStruct dsPage = digDoc.createDocStruct(pageType);
-                        Metadata physNo = new Metadata(physPageNumberType);
-                        physNo.setValue(String.valueOf(physicalOrderNumber));
-                        physicalOrderNumber++;
-                        dsPage.addMetadata(physNo);
+                            // create image element
+                            DocStruct dsPage = digDoc.createDocStruct(pageType);
+                            Metadata physNo = new Metadata(physPageNumberType);
+                            physNo.setValue(String.valueOf(physicalOrderNumber));
+                            physicalOrderNumber++;
+                            dsPage.addMetadata(physNo);
 
-                        dsPage.setImageName(image.getFileName().toString());
+                            dsPage.setImageName(image.getFileName().toString());
 
-                        Metadata logicalPageNumber = new Metadata(logicalPageNumberType);
-                        logicalPageNumber.setValue("uncounted");
-                        dsPage.addMetadata(logicalPageNumber);
+                            Metadata logicalPageNumber = new Metadata(logicalPageNumberType);
+                            logicalPageNumber.setValue("uncounted");
+                            dsPage.addMetadata(logicalPageNumber);
 
-                        // add image to the volume
-                        physical.addChild(dsPage);
+                            // add image to the volume
+                            physical.addChild(dsPage);
 
-                        // check if image is in a sub folder
-                        String parentFolder = image.getParent().getFileName().toString();
-                        if (!parentFolder.equals(volumeFolder)) {
-                            // image belongs to an issue
-                            // check if issue exists
-                            DocStruct currentIssue = null;
-                            if (volume.getAllChildren() != null) {
-                                for (DocStruct issue : volume.getAllChildren()) {
-                                    // get issue title, compare it with folder name
-                                    for (Metadata md : issue.getAllMetadata()) {
-                                        if (md.getType().getName().equals(titleType.getName())) {
-                                            if (md.getValue().equals(parentFolder)) {
-                                                currentIssue = issue;
+                            // check if image is in a sub folder
+                            String parentFolder = image.getParent().getFileName().toString();
+                            if (!parentFolder.equals(volumeFolder)) {
+                                // image belongs to an issue
+                                // check if issue exists
+                                DocStruct currentIssue = null;
+                                if (volume.getAllChildren() != null) {
+                                    for (DocStruct issue : volume.getAllChildren()) {
+                                        // get issue title, compare it with folder name
+                                        for (Metadata md : issue.getAllMetadata()) {
+                                            if (md.getType().getName().equals(titleType.getName())) {
+                                                if (md.getValue().equals(parentFolder)) {
+                                                    currentIssue = issue;
+                                                }
                                             }
                                         }
                                     }
                                 }
+                                // or create it
+                                if (currentIssue == null) {
+                                    currentIssue = digDoc.createDocStruct(issueType);
+                                    volume.addChild(currentIssue);
+                                    Metadata title = new Metadata(titleType);
+                                    title.setValue(parentFolder);
+                                    currentIssue.addMetadata(title);
+                                }
+                                dsPage.setImageName(parentFolder.replaceAll("\\W", "") + "_" + image.getFileName().toString());
+                                // add image to issue and volume
+                                currentIssue.addReferenceTo(dsPage, "logical_physical");
                             }
-                            // or create it
-                            if (currentIssue == null) {
-                                currentIssue = digDoc.createDocStruct(issueType);
-                                volume.addChild(currentIssue);
-                                Metadata title = new Metadata(titleType);
-                                title.setValue(parentFolder);
-                                currentIssue.addMetadata(title);
-                            }
-                            dsPage.setImageName(parentFolder.replaceAll("\\W", "") + "_" + image.getFileName().toString());
-                            // add image to issue and volume
-                            currentIssue.addReferenceTo(dsPage, "logical_physical");
-                        }
 
-                        volume.addReferenceTo(dsPage, "logical_physical");
+                            volume.addReferenceTo(dsPage, "logical_physical");
+                        }
                     }
 
                     if (record.getCollections() != null && !record.getCollections().isEmpty()) {
@@ -331,7 +330,7 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     mm.setDigitalDocument(digDoc);
                     mm.write(metsfilename);
                     io.setMetsFilename(metsfilename);
-                    io.setProcessTitle(folderName + "_" + year );
+                    io.setProcessTitle(folderName + "_" + year);
                     io.setImportReturnValue(ImportReturnValue.ExportFinished);
                     // copy/move images, use new file names
 
@@ -390,7 +389,6 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     log.error(e);
                     io.setErrorMessage("Cannot add additional metadata to '" + volumeFolder + "'");
                     io.setImportReturnValue(ImportReturnValue.InvalidData);
-
 
                 }
             }
