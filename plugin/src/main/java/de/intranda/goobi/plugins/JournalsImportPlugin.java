@@ -249,6 +249,10 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     int physicalOrderNumber = 1;
                     for (Path image : images) {
 
+                        if (image.getFileName().toString().endsWith(".pfd")) {
+                            continue;
+                        }
+
                         // create image element
                         DocStruct dsPage = digDoc.createDocStruct(pageType);
                         Metadata physNo = new Metadata(physPageNumberType);
