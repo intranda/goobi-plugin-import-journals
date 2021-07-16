@@ -249,7 +249,7 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     int physicalOrderNumber = 1;
                     for (Path image : images) {
 
-                        if (!image.getFileName().toString().endsWith(".pdf")) {
+                        if (!image.getFileName().toString().toLowerCase().endsWith("pdf")) {
 
                             // create image element
                             DocStruct dsPage = digDoc.createDocStruct(pageType);
