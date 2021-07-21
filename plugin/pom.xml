@@ -133,5 +133,9 @@
       <version>1.7.4</version>
       <scope>test</scope>
     </dependency>
-  </dependencies>
+</dependencies>
+ <scm>
+    <url>scm:git:ssh://git@gitea.intranda.com:goobi-workflow/goobi-plugin-import-journals.git</url>
+    <connection>scm:git:ssh://git@gitea.intranda.com:goobi-workflow/goobi-plugin-import-journals.git</connection>
+  </scm>
 </project>
