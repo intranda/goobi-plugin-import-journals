@@ -177,8 +177,11 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
             String folderName = record.getId();
             List<String> subFolder = new ArrayList<>();
             try {
-                Files.find(Paths.get(basedir, folderName), 1, (p, file) -> file.isDirectory() && p.getFileName().toString().matches("\\d+X?_\\d{4}")
-                        || p.getFileName().toString().matches("\\d{4}")).forEach(p -> subFolder.add(p.getFileName().toString()));
+                Files.find(Paths.get(basedir, folderName), 1,
+                        (p, file) -> file.isDirectory() && p.getFileName().toString().matches("\\d+X?_\\d{4}")
+                        || p.getFileName().toString().matches("\\d{4}") || p.getFileName().toString().matches("\\d+X?_\\d{4}_\\d+")
+                        || p.getFileName().toString().matches("\\d{4}_\\d+"))
+                .forEach(p -> subFolder.add(p.getFileName().toString()));
             } catch (IOException e) {
                 log.error(e);
             }
@@ -215,7 +218,20 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     DocStruct anchor = digDoc.getLogicalDocStruct();
                     DocStruct volume = anchor.getAllChildren().get(0);
                     DocStruct physical = digDoc.getPhysicalDocStruct();
-                    String year = volumeFolder.replace(record.getId(), "").replace("_", "");
+                    String datePart = null;
+                    if (volumeFolder.startsWith(record.getId())) {
+                        datePart = volumeFolder.replace(record.getId(), "").replaceFirst("_", "");
+                    } else {
+                        datePart = volumeFolder;
+                    }
+                    String issueNumber = null;
+                    String year = null;
+                    if (datePart.contains("_")) {
+                        year = datePart.split("_")[0];
+                        issueNumber = datePart.split("_")[1];
+                    } else {
+                        year = datePart;
+                    }
 
                     Metadata imagePath = new Metadata(prefs.getMetadataTypeByName("pathimagefiles"));
                     imagePath.setValue("./images/");
@@ -233,22 +249,26 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     Metadata publicationYear = new Metadata(pulicationYearType);
                     publicationYear.setValue(year);
                     volume.addMetadata(publicationYear);
-
+                    String order = null;
+                    if (StringUtils.isNotBlank(issueNumber)) {
+                        order = year + issueNumber;
+                    } else {
+                        order = year;
+                    }
                     Metadata currentNo = new Metadata(currentNoType);
-                    currentNo.setValue(year);
+                    currentNo.setValue(order);
                     volume.addMetadata(currentNo);
 
                     Metadata currentNoSort = new Metadata(currentNoSortType);
-                    currentNoSort.setValue(year);
+                    currentNoSort.setValue(order);
                     volume.addMetadata(currentNoSort);
 
                     Metadata volumeIdentifier = new Metadata(catalogIdDigitalType);
-                    volumeIdentifier.setValue(folderName + "_" + year);
+                    volumeIdentifier.setValue(folderName + "_" + datePart);
                     volume.addMetadata(volumeIdentifier);
 
                     int physicalOrderNumber = 1;
                     for (Path image : images) {
-
                         if (!image.getFileName().toString().toLowerCase().endsWith("pdf")) {
 
                             // create image element
@@ -325,12 +345,12 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
                     }
 
                     // save mets file,
-                    String metsfilename = Paths.get(importFolder, folderName + "_" + year + ".xml").toString();
+                    String metsfilename = Paths.get(importFolder, folderName + "_" + datePart + ".xml").toString();
                     MetsMods mm = new MetsMods(prefs);
                     mm.setDigitalDocument(digDoc);
                     mm.write(metsfilename);
                     io.setMetsFilename(metsfilename);
-                    io.setProcessTitle(folderName + "_" + year);
+                    io.setProcessTitle(folderName + "_" + datePart);
                     io.setImportReturnValue(ImportReturnValue.ExportFinished);
                     // copy/move images, use new file names
 
@@ -402,7 +422,7 @@ public class JournalsImportPlugin implements IImportPluginVersion2 {
         IOpacPlugin myImportOpac = null;
         ConfigOpacCatalogue coc = null;
         ConfigOpac co = ConfigOpac.getInstance();
-        for (ConfigOpacCatalogue configOpacCatalogue : co.getAllCatalogues()) {
+        for (ConfigOpacCatalogue configOpacCatalogue : co.getAllCatalogues("")) {
             if (configOpacCatalogue.getTitle().equals(catalogueName)) {
                 myImportOpac = configOpacCatalogue.getOpacPlugin();
                 coc = configOpacCatalogue;

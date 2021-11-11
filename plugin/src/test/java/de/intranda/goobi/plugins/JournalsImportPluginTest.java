@@ -66,7 +66,7 @@ public class JournalsImportPluginTest {
                 new ArrayList<>(), "PeriodicalVolume");
 
         ConfigOpac configOpacMock = EasyMock.createMock(ConfigOpac.class);
-        EasyMock.expect(configOpacMock.getAllCatalogues()).andReturn(getAllCatalogues()).anyTimes();
+        EasyMock.expect(configOpacMock.getAllCatalogues(EasyMock.anyString())).andReturn(getAllCatalogues()).anyTimes();
         EasyMock.expect(configOpacMock.getDoctypeByMapping(EasyMock.anyString(), EasyMock.anyString())).andReturn(cod).anyTimes();
         EasyMock.replay(configOpacMock);
 
